@@ -3,12 +3,13 @@ setopt INC_APPEND_HISTORY
 export HISTFILE=~/.histories/default
 export HISTDIR=`realpath ~/.histories`
 export SRVDIR=`realpath ~/.servers`
+export POWERLINE_FILE="/usr/share/oh-my-zsh/themes/powerline.zsh-theme"
 
 hset() {
     touch $HISTDIR/$1
     export HISTFILE=$HISTDIR/$1
     POWERLINE_RIGHT_B=`basename $HISTFILE`
-    source /usr/share/oh-my-zsh/themes/powerline.zsh-theme
+    source $POWERLINE_FILE
 }
 
 hist() {
@@ -31,7 +32,7 @@ ofrec() {
     POWERLINE_RIGHT_B="#`basename $HISTFILE`"
     export SUSPENDED_HISTORY=$HISTFILE
     export HISTFILE=$HISTDIR/default
-    source /usr/share/oh-my-zsh/themes/powerline.zsh-theme
+    source $POWERLINE_FILE
   else
     echo "no activ history"
   fi
@@ -45,7 +46,7 @@ onrec() {
     export HISTFILE=$SUSPENDED_HISTORY
     unset SUSPENDED_HISTORY
     POWERLINE_RIGHT_B=`basename $HISTFILE`
-    source /usr/share/oh-my-zsh/themes/powerline.zsh-theme
+    source $POWERLINE_FILE
   fi
 }
 
@@ -69,4 +70,5 @@ local cmd=${line%% *}
 && ${cmd} != "ofrec"
 && ${line} != "ls"
 ]]
+
 }
