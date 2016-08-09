@@ -1,0 +1,72 @@
+POWERLINE_RIGHT_B="`basename $HISTFILE`"
+setopt INC_APPEND_HISTORY
+export HISTFILE=~/.histories/default
+export HISTDIR=`realpath ~/.histories`
+export SRVDIR=`realpath ~/.servers`
+
+hset() {
+    touch $HISTDIR/$1
+    export HISTFILE=$HISTDIR/$1
+    POWERLINE_RIGHT_B=`basename $HISTFILE`
+    source /usr/share/oh-my-zsh/themes/powerline.zsh-theme
+}
+
+hist() {
+  if [ $# -eq 1 ]
+  then
+    cat $HISTDIR/$1 | sed 's/.*;//' | cat -n - | tail
+  else
+      if [ -z ${SUSPENDED_HISTORY+x} ]
+      then
+        cat $HISTFILE | sed 's/.*;//' | cat -n - | tail
+      else
+        cat $SUSPENDED_HISTORY | sed 's/.*;//' | cat -n - | tail
+      fi
+    fi
+}
+
+ofrec() {
+  if [ "$HISTFILE" != "$HISTDIR/default" ]
+  then
+    POWERLINE_RIGHT_B="#`basename $HISTFILE`"
+    export SUSPENDED_HISTORY=$HISTFILE
+    export HISTFILE=$HISTDIR/default
+    source /usr/share/oh-my-zsh/themes/powerline.zsh-theme
+  else
+    echo "no activ history"
+  fi
+}
+
+onrec() {
+  if [ -z ${SUSPENDED_HISTORY+x} ]
+  then
+    echo "No History was suspended"
+  else
+    export HISTFILE=$SUSPENDED_HISTORY
+    unset SUSPENDED_HISTORY
+    POWERLINE_RIGHT_B=`basename $HISTFILE`
+    source /usr/share/oh-my-zsh/themes/powerline.zsh-theme
+  fi
+}
+
+lshist() {
+    wc -l $HISTDIR/* | head -n -1
+}
+
+chpwd() {
+    print -s "##$PWD###"
+    ls
+}
+
+zshaddhistory() {
+local line=${1%%$'\n'}
+local cmd=${line%% *}
+
+[[ ${#line} -ge 5
+&& ${cmd} != "hset"
+&& ${cmd} != "hist"
+&& ${cmd} != "onrec"
+&& ${cmd} != "ofrec"
+&& ${line} != "ls"
+]]
+}

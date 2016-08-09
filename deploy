@@ -1,0 +1,46 @@
+#!/bin/zsh
+clhist
+if [ $# -eq 1 ]
+then
+  if [ "$1" == "--help" ]
+  then
+    echo "deploy [options] user@target [history/script]"
+    echo "Autodeploy for Zsh"
+    echo "Copyright 2016 Simon Diepold"
+    echo "-s Deploys a History to a list of servers"
+    echo "-f Deploys a script file"
+  else
+    cat $HISTFILE | ssh $1 'bash -s'
+  fi
+else
+  if [ $# -eq 2 ]
+  then
+    cat $HISTDIR/$2 | ssh $1 'bash -s'
+  fi
+
+  if [ $# -eq 3 ]
+  then
+    if [ "$1" == "-s" ]
+    then
+      while read host
+      do
+        cat $HISTDIR/$3 | ssh $host 'bash -s'
+      done < $SRVDIR/$2
+    else
+      if [ "$1" == "-f" ]
+      then
+        cat $3 | ssh $2 'bash -s'
+      fi
+    fi
+    if [ $# -eq 4 ]
+    then
+      if ( [ "$1" == "-s" ] && ["$2" == "-f" ] ) || ([ "$2" == "-s" ] && ["$1" == "-f" ] )
+      then
+        while read host
+        do
+          cat $4 | ssh $host 'bash -s'
+        done < $SRVDIR/$3
+      fi
+    fi
+  fi
+fi
