@@ -63,12 +63,11 @@ zshaddhistory() {
 local line=${1%%$'\n'}
 local cmd=${line%% *}
 
-[[ ${#line} -ge 5
+[[ ${#line} -ge 1 
 && ${cmd} != "hset"
 && ${cmd} != "hist"
 && ${cmd} != "onrec"
 && ${cmd} != "ofrec"
-&& ${line} != "ls"
 ]]
 
 }
